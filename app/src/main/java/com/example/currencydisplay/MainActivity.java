@@ -4,14 +4,18 @@ import static com.google.gson.JsonParser.parseString;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -57,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
         try {
 //            doc = Jsoup.connect("url").get();
 
-
             //connecting url by Jsoup
             Connection connection = Jsoup.connect(currencies).ignoreContentType(true);
             connection.execute();
@@ -66,26 +69,51 @@ public class MainActivity extends AppCompatActivity {
             JsonElement jsonElement = parseString(strJson);
             JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-            String valute = jsonObject.get("Valute").toString();
-            Log.d("MyLog","Valute: " + valute);
+            JsonObject valute = (JsonObject) jsonObject.get("Valute");
+            Log.d("MyLog","Valute JSON: " + valute);
 
-            JsonElement jsonElementValute = parseString(valute);
-           // JsonArray jsonObjectValute = jsonObject.getAsJsonArray("Valute");
+            String val = jsonObject.get("Valute").toString();
+            String vval = val.substring(1,val.length()-1);
+            Log.d("MyLog","Valute string: " + vval);
+
+            String[] res = vval.split("\\},");
+
+            JsonArray jsonArray = new JsonArray();
+            for (String s : res){
+                //Log.d("MyLog","res string: " + s);
+                jsonArray.add(s);
+            }
 
 
-//            Map<String, Long> currMap = new TreeMap<>();
-//            for (int i = 0; i < jsonObjectValute.size(); i++) {
-//                Log.d("MyLog","Date: " + jsonObjectValute.get(i));
+             //get array elements
+                    for( int i = 0; i < jsonArray.size(); i++){
+                        Log.d("MyLog","i: " + jsonArray.get(i));
+                    }
+            //get every value from array
+//            Iterator i = jsonValute.iterator();
+//                    while (i.hasNext()){
+//                        JsonObject innerObject = (JsonObject) i.next();
+//                        System.out.println(innerObject.get("ID"));
+//                    }
+
+
+
+//            String date = jsonObject.get("Date").toString();
+//            String valute = jsonObject.get("Valute").toString();
+
+//            Log.d("MyLog","Valute: " + valute);
+//            Log.d("MyLog","Date: " + date);
+
+//            try (InputStream is = new URL(currencies).openStream();
+//                 Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+//
+//                Gson gson = new Gson();
+//                String td = gson.fromJson(reader, String.class);
+//
+//                System.out.println(td);
 //            }
-            String date = jsonObject.get("Date").toString();
-            Log.d("MyLog","Date: " + date);
 
 
-
-
-//            Log.d("MyLog","Title: " + doc.title());
-//            Log.d("MyLog","Title: " + doc.text());
-//            Log.d("MyLog","Title: " + doc.getAllElements());
 
         } catch (IOException e) {
             e.printStackTrace();
