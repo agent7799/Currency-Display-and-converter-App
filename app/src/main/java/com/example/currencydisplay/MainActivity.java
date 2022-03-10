@@ -18,7 +18,6 @@ import org.jsoup.nodes.Document;
 
 import java.io.*;
 import java.net.*;
-import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
