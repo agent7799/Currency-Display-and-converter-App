@@ -10,6 +10,7 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="65dp"
         android:layout_height="match_parent"
         android:background="@color/asideBGolor"
@@ -33,7 +34,7 @@
             android:id="@+id/contacts"
             android:layout_width="100dp"
             android:layout_height="145dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="160dp"
             android:gravity="center"
             android:rotation="270"
             android:text="@string/contacts_text"
@@ -54,6 +55,19 @@
             app:layout_constraintBottom_toTopOf="@+id/contacts"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.514"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/main_scene"
+            android:layout_width="100dp"
+            android:layout_height="145dp"
+            android:fontFamily="@font/montserrat_alternates_bold"
+            android:gravity="center"
+            android:rotation="270"
+            android:text="@string/main_scene_text"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/about"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -88,5 +102,26 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.081" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/filter_text"
+        app:layout_constraintStart_toEndOf="@+id/constraintLayout"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:srcCompat="@drawable/ic_filter" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="266dp"
+        android:layout_height="24dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.562"
+        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintTop_toTopOf="@+id/imageView2"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
