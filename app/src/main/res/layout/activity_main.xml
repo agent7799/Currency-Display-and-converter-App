@@ -112,12 +112,13 @@
         android:contentDescription="@string/filter_text"
         app:layout_constraintStart_toEndOf="@+id/constraintLayout"
         app:layout_constraintTop_toBottomOf="@+id/textView2"
-        app:srcCompat="@drawable/ic_filter" />
+        app:srcCompat="@drawable/ic_filter"
+        tools:ignore="ImageContrastCheck" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="266dp"
-        android:layout_height="24dp"
+        android:id="@+id/valuteRecycler"
+        android:layout_width="275dp"
+        android:layout_height="434dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.562"
@@ -125,17 +126,15 @@
         app:layout_constraintTop_toTopOf="@+id/imageView2"
         app:layout_constraintVertical_bias="0.0" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="344dp"
-        android:layout_height="534dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="8dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/constraintLayout"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView"
-        app:layout_constraintVertical_bias="1.0" />
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/valuteRecycler"-->
+<!--        android:layout_width="303dp"-->
+<!--        android:layout_height="449dp"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginTop="48dp"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.0"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/constraintLayout"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/textView2" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

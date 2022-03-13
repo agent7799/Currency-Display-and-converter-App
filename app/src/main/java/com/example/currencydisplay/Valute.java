@@ -8,16 +8,25 @@ import java.util.Map;
 
 
 class Valute {
-    private Integer nominal;
+    private int nominal;
     private String name;
     private Long value;
+    private int id;
 
 
-    public Integer getNominal() {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getNominal() {
         return nominal;
     }
 
-    public void setNominal(Integer nominal) {
+    public void setNominal(int nominal) {
         this.nominal = nominal;
     }
 
@@ -29,15 +38,16 @@ class Valute {
         this.name = name;
     }
 
-    public long getValue() {
+    public Long getValue() {
         return value;
     }
 
-    public void setValue(long value) {
+    public void setValue(Long value) {
         this.value = value;
     }
 
-    public Valute(Integer nominal, String name, Long value) {
+
+    public Valute(int id, int nominal, String name, Long value) {
         this.nominal = nominal;
         this.name = name;
         this.value = value;
