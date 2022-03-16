@@ -2,16 +2,12 @@ package com.example.currencydisplay;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
-import java.util.Objects;
 
 
 public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteViewHolder>{
@@ -48,7 +44,6 @@ public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteView
 
         public ValuteViewHolder(@NonNull View itemView) {
             super(itemView);
-
             valuteTitle = itemView.findViewById(R.id.valuteTitle);
 
         }

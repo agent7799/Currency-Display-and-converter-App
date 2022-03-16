@@ -30,8 +30,10 @@ public class MainActivity extends AppCompatActivity {
     private static Date previousDate;
     private static URL previousURL;
     private static Time timestamp;
-    private static List<Valute> valuteList = new ArrayList<>();
     private static JsonArray jsonArray = new JsonArray();
+    private static List<Valute> valuteList = new ArrayList<>();
+
+
     RecyclerView valuteRecycler;
     ValuteAdapter valuteAdapter;
 
@@ -53,14 +55,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         init();
+
         setValuteRecycler(valuteList);
+
 
     }
 
     private void setValuteRecycler(List<Valute> valuteList) {
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
-
         valuteRecycler = findViewById(R.id.valuteRecycler);
         valuteRecycler.setLayoutManager(layoutManager);
         valuteAdapter = new ValuteAdapter(this, valuteList);
@@ -72,9 +75,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                getWeb();
+                jsonArray = getWeb();
+
                 valuteList = createValuteList(jsonArray);
-                Log.d("MyLog","res string: " + valuteList.size() + " valutes created");
+
 
             }
         };
@@ -82,48 +86,53 @@ public class MainActivity extends AppCompatActivity {
         secThread.start();
     }
 
-    private void getWeb() {
-        try (InputStream in =  link.openStream()){
+    private JsonArray getWeb() {
+        JsonArray jsonArr = new JsonArray();
+        try (InputStream in = link.openStream()) {
 //Convert the input stream to a json element
             JsonElement root = parseReader(new BufferedReader(new InputStreamReader(in)));
-            JsonObject jsonObject = root.getAsJsonObject(); //May be an array, may be an object.
+//May be an array, may be an object.
+            JsonObject jsonObject = root.getAsJsonObject();
 //string from valute JSON
             String val = jsonObject.get(TAG_VALUTE).toString().substring(1, jsonObject.get(TAG_VALUTE).toString().length() - 1);
             //Log.d("MyLog", "Valute string: " + val);
             String[] res = val.split("\\},");
 //add  JSON objects to JSON array from strings
             for (int i = 0; i < res.length; i++) {
-                if (i< res.length-1){
+                if (i < res.length - 1) {
                     res[i] = res[i].substring(6) + "}";
                 } else {
-                    res[i] =  res[i].substring(6);
+                    res[i] = res[i].substring(6);
                 }
-                jsonArray.add(parseString(res[i]).getAsJsonObject());
+                jsonArr.add(parseString(res[i]).getAsJsonObject());
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Log.d("MyLog", "JsonArr created: " + jsonArr);
+        return jsonArr;
     }
 
 
-private List<Valute> createValuteList(JsonArray jsonArray){
-        List<Valute> valuteList = new ArrayList<>();
-    Iterator i = jsonArray.iterator();
-    while (i.hasNext()) {
-        JsonObject obj = (JsonObject) i.next();
-        valuteList.add(new Valute(
-                obj.get("NumCode").getAsInt(),
-                obj.get("Nominal").getAsInt(),
-                obj.get("Name").getAsString(),
-                (long) (obj.get("Value").getAsDouble()*100)));
+    private List<Valute> createValuteList(JsonArray jsonArray) {
+        List<Valute> list = new ArrayList<>();
+        for (int i = 0 ; i < jsonArray.size(); i++){
+            JsonObject obj = (JsonObject) jsonArray.get(i);
+            list.add(new Valute(
+                    i,
+                    obj.get("Nominal").getAsInt(),
+                    obj.get("Name").getAsString(),
+                    (long) (obj.get("Value").getAsDouble() * 100)));
+        }
+
+        for (int j = 0; j < 3; j++) {
+            Log.d("MyLog", "createValuteList result: "
+                    + "id: " + list.get(j).getId() + ", "
+                    + list.get(j).getValue() + " рублей за "
+                    + list.get(j).getNominal() + " "
+                    + list.get(j).getName());
+        }
+        Log.d("MyLog",  " list of " + list.size() + " valutes created by createValuteList...");
+        return list;
     }
-
-    for (int j = 0; j < valuteList.size(); j++) {
-
-        Log.d("MyLog", "createValuteList result: " + valuteList.get(j).getValue() + " рублей за " + valuteList.get(j).getNominal() + " " + valuteList.get(j).getName());
-    }
-        return valuteList;
-}
-
-
 }
