@@ -56,7 +56,19 @@ public class MainActivity extends AppCompatActivity {
 
         init();
 
+        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
+        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
+        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
+        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
+        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
+        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
+        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
+
+
         setValuteRecycler(valuteList);
+
+
+
 
 
     }

@@ -30,7 +30,7 @@ public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteView
 
     @Override
     public void onBindViewHolder(@NonNull ValuteViewHolder holder, int position) {
-        holder.valuteTitle.setText(valutes.get(position).getId());
+        holder.valuteTitle.setText(valutes.get(position).getName());
     }
 
     @Override
