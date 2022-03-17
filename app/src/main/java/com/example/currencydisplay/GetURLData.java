@@ -18,15 +18,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 
 public class GetURLData extends AsyncTask<String, Integer, Void> {
 
     @Override
     protected Void doInBackground(String... strings) {
-        // JsonArray jsonArr = new JsonArray();
-        //List<Valute> list = new ArrayList<>();
-
 
         URL link = null;
         try {
