@@ -24,14 +24,15 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static URL link;
-    private static final String TAG_VALUTE = "Valute";
+    protected static final String TAG_VALUTE = "Valute";
     private final String currencies = "https://www.cbr-xml-daily.ru/daily_json.js";
     private static Date date;
     private static Date previousDate;
     private static URL previousURL;
     private static Time timestamp;
-    private static JsonArray jsonArray = new JsonArray();
-    private static List<Valute> valuteList = new ArrayList<>();
+    protected static JsonArray jsonArray = new JsonArray();
+    protected static List<Valute> valuteList = new ArrayList<>();
+
 
 
     RecyclerView valuteRecycler;
@@ -54,26 +55,36 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        init();
 
-        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
-        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
-        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
-        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
-        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
-        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
-        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
+
+        //init();
+
+        GetURLData getURLData = new GetURLData();
+        getURLData.execute(currencies);
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+
+//        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
+//        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
+//        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
+//        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
+//        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
+//        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
+//        valuteList.add(new Valute(1, 1, "fbdfbdf", 123l));
 
 
         setValuteRecycler(valuteList);
 
 
-
-
-
     }
 
-    private void setValuteRecycler(List<Valute> valuteList) {
+    protected void setValuteRecycler(List<Valute> valuteList) {
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         valuteRecycler = findViewById(R.id.valuteRecycler);
@@ -87,9 +98,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                jsonArray = getWeb();
 
-                valuteList = createValuteList(jsonArray);
+                //jsonArray = getWeb();
+                //valuteList = createValuteList(jsonArray);
 
 
             }
@@ -100,9 +111,9 @@ public class MainActivity extends AppCompatActivity {
 
     private JsonArray getWeb() {
         JsonArray jsonArr = new JsonArray();
-        try (InputStream in = link.openStream()) {
+        try (InputStream inputStream = link.openStream()) {
 //Convert the input stream to a json element
-            JsonElement root = parseReader(new BufferedReader(new InputStreamReader(in)));
+            JsonElement root = parseReader(new BufferedReader(new InputStreamReader(inputStream)));
 //May be an array, may be an object.
             JsonObject jsonObject = root.getAsJsonObject();
 //string from valute JSON
