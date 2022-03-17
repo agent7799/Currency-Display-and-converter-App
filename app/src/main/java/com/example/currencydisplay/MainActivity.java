@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView infoTextView;
     private ProgressBar progressBar;
     private ProgressBar horizontalProgressBar;
+    private Button updateButton;
 
     RecyclerView valuteRecycler;
     ValuteAdapter valuteAdapter;
@@ -59,18 +62,32 @@ public class MainActivity extends AppCompatActivity {
         infoTextView = findViewById(R.id.infoTextView);
         progressBar = findViewById(R.id.progressbar);
         horizontalProgressBar = findViewById(androidx.appcompat.R.id.progress_horizontal);
-
+        updateButton = findViewById(R.id.updateButton);
 
         GetURLData getURLData = new GetURLData();
         getURLData.execute(currencies);
-
-
         setValuteRecycler(valuteList);
+
+
+        updateButton.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onClick(View view) {
+
+                   // readJsonDataFromWeb(currencies);
+                    //parseJsonToValutesList(jsonArray);
+                    valuteAdapter.notifyDataSetChanged();
+
+                }
+        });
+
+
+
+
 
     }
 
     protected void setValuteRecycler(List<Valute> valuteList) {
-
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         valuteRecycler = findViewById(R.id.valuteRecycler);
         valuteRecycler.setLayoutManager(layoutManager);
@@ -80,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
     class GetURLData extends AsyncTask<String, Integer, Void> {
 
-        //int counter = 0;
+        private int counter = 0;
 
         @Override
         protected void onPreExecute() {
@@ -93,43 +110,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(String... strings) {
-
-            URL link = null;
-            try {
-                link = new URL(strings[0]);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-            try (InputStream in = link.openStream()) {
-                int counter = 0;
-                JsonElement root = parseReader(new BufferedReader(new InputStreamReader(in)));
-                JsonObject jsonObject = root.getAsJsonObject();
-                String val = jsonObject.get(TAG_VALUTE).toString().substring(1, jsonObject.get(TAG_VALUTE).toString().length() - 1);
-                String[] res = val.split("\\},");
-                for (int i = 0; i < res.length; i++) {      //add  JSON objects to JSON array from strings
-                    if (i < res.length - 1) {
-                        res[i] = res[i].substring(6) + "}";
-                    } else {
-                        res[i] = res[i].substring(6);
-                    }
-                    jsonArray.add(parseString(res[i]).getAsJsonObject());
-                }
-                for (int i = 0; i < jsonArray.size(); i++) {
-                    JsonObject obj = (JsonObject) jsonArray.get(i);
-                    valuteList.add(new Valute(
-                            i,
-                            obj.get("Nominal").getAsInt(),
-                            obj.get("Name").getAsString(),
-                            (long) (obj.get("Value").getAsDouble() * 100)));
-                    //getFloor(counter);
-                    publishProgress(++counter);
-                }
-                Log.d("MyLog", " list of " + valuteList.size() + " valutes created by createValuteList...");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            Log.d("MyLog", "JsonArr created: " + jsonArray);
+            readJsonDataFromWeb(strings[0]);
+            parseJsonToValutesList(jsonArray);
             return null;
         }
 
@@ -139,9 +121,9 @@ public class MainActivity extends AppCompatActivity {
             infoTextView.setText("Loading Currency: " + progress[0]);
         }
 
-        private void getFloor(int floor) throws InterruptedException {
-            TimeUnit.MILLISECONDS.sleep(100);
-        }
+//        private void getFloor(int floor) throws InterruptedException {
+//            TimeUnit.MILLISECONDS.sleep(100);
+//        }
 
         @Override
         protected void onPostExecute(Void aVoid) {
@@ -150,7 +132,50 @@ public class MainActivity extends AppCompatActivity {
             infoTextView.setText("Кот залез на крышу");
             infoTextView.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.INVISIBLE); // прячем бесконечный индикатор
+            valuteAdapter.notifyDataSetChanged();
         }
-
     }
+
+    private void readJsonDataFromWeb(String link){
+        URL url = null;
+        try {
+            url = new URL(link);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        try (InputStream in = url.openStream()) {
+
+            JsonElement root = parseReader(new BufferedReader(new InputStreamReader(in)));
+            JsonObject jsonObject = root.getAsJsonObject();
+            String val = jsonObject.get(TAG_VALUTE).toString().substring(1, jsonObject.get(TAG_VALUTE).toString().length() - 1);
+            String[] res = val.split("\\},");
+            for (int i = 0; i < res.length; i++) {      //add  JSON objects to JSON array from strings
+                if (i < res.length - 1) {
+                    res[i] = res[i].substring(6) + "}";
+                } else {
+                    res[i] = res[i].substring(6);
+                }
+                jsonArray.add(parseString(res[i]).getAsJsonObject());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.d("MyLog", "JsonArr created: " + jsonArray);
+    }
+
+    private void parseJsonToValutesList(JsonArray jsonArray){
+        for (int i = 0; i < jsonArray.size(); i++) {
+            JsonObject obj = (JsonObject) jsonArray.get(i);
+            valuteList.add(new Valute(
+                    i,
+                    obj.get("Nominal").getAsInt(),
+                    obj.get("Name").getAsString(),
+                    (long) (obj.get("Value").getAsDouble() * 100)));
+            //getFloor(counter);
+            //publishProgress(++counter);
+        }
+        Log.d("MyLog", " list of " + valuteList.size() + " valutes created by createValuteList...");
+    }
+
+
 }

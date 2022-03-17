@@ -1,13 +1,14 @@
 <resources>
     <string name="app_name">Currency Display</string>
     <string name="app_text">App</string>
-    <string name="currency_text">Список Валют</string>
+    <string name="currency_text">Курсы Валют</string>
     <string name="sales_icon">Sales</string>
     <string name="contacts_text">Contacts</string>
     <string name="about_text">About</string>
     <string name="main_scene_text">Main</string>
     <string name="filter_text">Main</string>
     <string name="info_text">Loading Currency List...</string>
+    <string name="update">Обновить</string>
 
 
 
