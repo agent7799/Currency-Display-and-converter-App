@@ -62,24 +62,21 @@ public class MainActivity extends AppCompatActivity {
         infoTextView = findViewById(R.id.infoTextView);
         progressBar = findViewById(R.id.progressbar);
         horizontalProgressBar = findViewById(androidx.appcompat.R.id.progress_horizontal);
-        updateButton = findViewById(R.id.updateButton);
+        //updateButton = findViewById(R.id.updateButton);
 
         GetURLData getURLData = new GetURLData();
         getURLData.execute(currencies);
         setValuteRecycler(valuteList);
 
 
-        updateButton.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onClick(View view) {
-
-                   // readJsonDataFromWeb(currencies);
-                    //parseJsonToValutesList(jsonArray);
-                    valuteAdapter.notifyDataSetChanged();
-
-                }
-        });
+//        updateButton.setOnClickListener(new View.OnClickListener() {
+//            @SuppressLint("NotifyDataSetChanged")
+//            @Override
+//            public void onClick(View view) {
+//
+//                   valuteAdapter.notifyDataSetChanged();
+//                }
+//        });
 
 
 
