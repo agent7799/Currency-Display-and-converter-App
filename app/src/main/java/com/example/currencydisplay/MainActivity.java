@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView infoTextView;
     private ProgressBar progressBar;
-    private Button startButton;
     private ProgressBar horizontalProgressBar;
 
     RecyclerView valuteRecycler;
@@ -61,12 +60,12 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressbar);
         horizontalProgressBar = findViewById(androidx.appcompat.R.id.progress_horizontal);
 
+
         GetURLData getURLData = new GetURLData();
         getURLData.execute(currencies);
 
 
         setValuteRecycler(valuteList);
-
 
     }
 
@@ -81,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
     class GetURLData extends AsyncTask<String, Integer, Void> {
 
-        int counter = 0;
+        //int counter = 0;
 
         @Override
         protected void onPreExecute() {
@@ -102,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             try (InputStream in = link.openStream()) {
-
+                int counter = 0;
                 JsonElement root = parseReader(new BufferedReader(new InputStreamReader(in)));
                 JsonObject jsonObject = root.getAsJsonObject();
                 String val = jsonObject.get(TAG_VALUTE).toString().substring(1, jsonObject.get(TAG_VALUTE).toString().length() - 1);
@@ -122,13 +121,11 @@ public class MainActivity extends AppCompatActivity {
                             obj.get("Nominal").getAsInt(),
                             obj.get("Name").getAsString(),
                             (long) (obj.get("Value").getAsDouble() * 100)));
-                    getFloor(counter);
+                    //getFloor(counter);
                     publishProgress(++counter);
                 }
                 Log.d("MyLog", " list of " + valuteList.size() + " valutes created by createValuteList...");
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
@@ -138,11 +135,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onProgressUpdate(Integer... progress) {
-            // [... Обновите индикатор хода выполнения, уведомления или другой
-            // элемент пользовательского интерфейса ...]
-            infoTextView.setText("Loading Currency: " + counter);
-
-            //horizontalProgressBar.setProgress(counter);
+            super.onProgressUpdate(progress);
+            infoTextView.setText("Loading Currency: " + progress[0]);
         }
 
         private void getFloor(int floor) throws InterruptedException {
@@ -156,7 +150,6 @@ public class MainActivity extends AppCompatActivity {
             infoTextView.setText("Кот залез на крышу");
             infoTextView.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.INVISIBLE); // прячем бесконечный индикатор
-            //horizontalProgressBar.setProgress(0);
         }
 
     }
