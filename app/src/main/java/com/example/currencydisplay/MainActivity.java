@@ -36,14 +36,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    protected static final String TAG_VALUTE = "Valute";
-    protected final String currencies = "https://www.cbr-xml-daily.ru/daily_json.js";
-    //private static String date;
-    private static Date previousDate;
-    private static URL previousURL;
-    private static Time timestamp;
-    protected static JsonArray jsonArray = new JsonArray();
-    protected static List<Valute> valuteList = new ArrayList<>();
+    private static final String TAG_VALUTE = "Valute";
+    private final String currencies = "https://www.cbr-xml-daily.ru/daily_json.js";
+    private static List<Valute> valuteList = new ArrayList<>();
 
     private Thread secThread;
 
@@ -54,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                readJsonDataFromWeb(currencies);
-                parseJsonToValutesList(jsonArray);
+                parseJsonToValutesList(readJsonDataFromWeb(currencies));
+
             }
         };
         secThread = new Thread(runnable);
@@ -65,9 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView infoTextView;
     private TextView dateOfUpdate;
-
     private ProgressBar progressBar;
-    private ProgressBar horizontalProgressBar;
     private Button updateButton;
 
     RecyclerView valuteRecycler;
@@ -83,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
         dateOfUpdate = findViewById(R.id.dateOfUpdate);
 
         progressBar = findViewById(R.id.progressbar);
-        horizontalProgressBar = findViewById(androidx.appcompat.R.id.progress_horizontal);
         updateButton = findViewById(R.id.updateButton);
 
         GetURLData getURLData = new GetURLData();
@@ -97,19 +89,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 updateData();
 
-                valuteRecycler.setAdapter(null);
-                valuteRecycler.setLayoutManager(null);
-                valuteRecycler.setAdapter(valuteAdapter);
-                valuteRecycler.setLayoutManager(layoutManager);
                 valuteAdapter.notifyDataSetChanged();
-
                 }
         });
-
-
-
-
-
     }
 
     protected void setValuteRecycler(List<Valute> valuteList) {
@@ -120,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         valuteRecycler.setAdapter(valuteAdapter);
     }
 
-    class GetURLData extends AsyncTask<String, Integer, Void> {
+    private class GetURLData extends AsyncTask<String, Integer, Void> {
 
         private int counter = 0;
 
@@ -135,8 +117,9 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(String... strings) {
-            readJsonDataFromWeb(strings[0]);
-            parseJsonToValutesList(jsonArray);
+
+            parseJsonToValutesList(readJsonDataFromWeb(strings[0]));
+
             return null;
         }
 
@@ -161,8 +144,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void readJsonDataFromWeb(String link){
-        JsonObject jsonObject = null;
+    protected JsonArray readJsonDataFromWeb(String link){
+        JsonObject jsonObject = new JsonObject();
+        JsonArray jsonArray = new JsonArray();
+        String[] res;
+
+//        for(int i = 0 ; i < jsonArray.size() ; i++){
+//            jsonArray.remove(i);
+//        }
         URL url = null;
         try {
             url = new URL(link);
@@ -178,8 +167,9 @@ public class MainActivity extends AppCompatActivity {
             Date date = new Date();
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
             dateOfUpdate.setText("Время обновления: " + formatter.format(date));
+
             String val = jsonObject.get(TAG_VALUTE).toString().substring(1, jsonObject.get(TAG_VALUTE).toString().length() - 1);
-            String[] res = val.split("\\},");
+            res = val.split("\\},");
             for (int i = 0; i < res.length; i++) {      //add  JSON objects to JSON array from strings
                 if (i < res.length - 1) {
                     res[i] = res[i].substring(6) + "}";
@@ -191,10 +181,13 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.d("MyLog", "JsonArr created: " + jsonArray);
+        Log.d("MyLog", jsonArray.size() + " elements of JsonArray created: " + jsonArray);
+        return jsonArray;
+
     }
 
-    private void parseJsonToValutesList(JsonArray jsonArray){
+    protected void parseJsonToValutesList(JsonArray jsonArray){
+        valuteList.clear();
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonObject obj = (JsonObject) jsonArray.get(i);
             valuteList.add(new Valute(
