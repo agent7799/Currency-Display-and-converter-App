@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,36 +17,55 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.*;
 import java.sql.Time;
-import java.text.BreakIterator;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends AppCompatActivity {
 
     protected static final String TAG_VALUTE = "Valute";
     protected final String currencies = "https://www.cbr-xml-daily.ru/daily_json.js";
-    private static Date date;
+    //private static String date;
     private static Date previousDate;
     private static URL previousURL;
     private static Time timestamp;
     protected static JsonArray jsonArray = new JsonArray();
     protected static List<Valute> valuteList = new ArrayList<>();
 
+    private Thread secThread;
+
+    private RecyclerView.LayoutManager layoutManager;
+
+    private void updateData() {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+
+                readJsonDataFromWeb(currencies);
+                parseJsonToValutesList(jsonArray);
+            }
+        };
+        secThread = new Thread(runnable);
+        secThread.start();
+    }
+
+
     private TextView infoTextView;
+    private TextView dateOfUpdate;
+
     private ProgressBar progressBar;
     private ProgressBar horizontalProgressBar;
     private Button updateButton;
@@ -60,23 +80,31 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         infoTextView = findViewById(R.id.infoTextView);
+        dateOfUpdate = findViewById(R.id.dateOfUpdate);
+
         progressBar = findViewById(R.id.progressbar);
         horizontalProgressBar = findViewById(androidx.appcompat.R.id.progress_horizontal);
-        //updateButton = findViewById(R.id.updateButton);
+        updateButton = findViewById(R.id.updateButton);
 
         GetURLData getURLData = new GetURLData();
         getURLData.execute(currencies);
         setValuteRecycler(valuteList);
 
 
-//        updateButton.setOnClickListener(new View.OnClickListener() {
-//            @SuppressLint("NotifyDataSetChanged")
-//            @Override
-//            public void onClick(View view) {
-//
-//                   valuteAdapter.notifyDataSetChanged();
-//                }
-//        });
+        updateButton.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onClick(View view) {
+                updateData();
+
+                valuteRecycler.setAdapter(null);
+                valuteRecycler.setLayoutManager(null);
+                valuteRecycler.setAdapter(valuteAdapter);
+                valuteRecycler.setLayoutManager(layoutManager);
+                valuteAdapter.notifyDataSetChanged();
+
+                }
+        });
 
 
 
@@ -85,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void setValuteRecycler(List<Valute> valuteList) {
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+        layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         valuteRecycler = findViewById(R.id.valuteRecycler);
         valuteRecycler.setLayoutManager(layoutManager);
         valuteAdapter = new ValuteAdapter(this, valuteList);
@@ -134,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void readJsonDataFromWeb(String link){
+        JsonObject jsonObject = null;
         URL url = null;
         try {
             url = new URL(link);
@@ -143,7 +172,12 @@ public class MainActivity extends AppCompatActivity {
         try (InputStream in = url.openStream()) {
 
             JsonElement root = parseReader(new BufferedReader(new InputStreamReader(in)));
-            JsonObject jsonObject = root.getAsJsonObject();
+            jsonObject = root.getAsJsonObject();
+
+            //date = jsonObject.get("Date").toString();
+            Date date = new Date();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            dateOfUpdate.setText("Время обновления: " + formatter.format(date));
             String val = jsonObject.get(TAG_VALUTE).toString().substring(1, jsonObject.get(TAG_VALUTE).toString().length() - 1);
             String[] res = val.split("\\},");
             for (int i = 0; i < res.length; i++) {      //add  JSON objects to JSON array from strings

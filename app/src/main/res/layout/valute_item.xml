@@ -5,20 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/rectangle"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/app_name"
-        app:layout_constraintStart_toStartOf="@id/valuteTitle"
-        app:layout_constraintTop_toTopOf="@id/valuteTitle"
-        app:srcCompat="@drawable/ic_rectangle11"
-        tools:ignore="ImageContrastCheck" />
+<!--    <ImageView-->
+<!--        android:id="@+id/rectangle"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:contentDescription="@string/app_name"-->
+<!--        app:layout_constraintStart_toStartOf="@id/valuteTitle"-->
+<!--        app:layout_constraintTop_toTopOf="@id/valuteTitle"-->
+<!--        app:srcCompat="@drawable/ic_rectangle11"-->
+<!--        tools:ignore="ImageContrastCheck" />-->
 
     <TextView
         android:id="@+id/valuteTitle"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:fontFamily="@font/montserrat_alternates"
         android:text="ValuteTitle"
         android:textAlignment="viewStart"
