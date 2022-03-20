@@ -2,12 +2,12 @@ package com.example.currencydisplay;
 
 import static com.google.gson.JsonParser.parseReader;
 import static com.google.gson.JsonParser.parseString;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         Button updateButton = findViewById(R.id.updateButton);
         Button removeButton = findViewById(R.id.removeButton);
         Button insertButton = findViewById(R.id.insertButton);
+        Button converterButton = findViewById(R.id.converterButton);
 
         setValuteRecycler(valuteList);
 
@@ -102,14 +103,13 @@ public class MainActivity extends AppCompatActivity {
                             updateButton.setVisibility(View.VISIBLE);
                             break;
                         case MSG_UPDATE_IN_PROGRESS:
-                            updateButton.setAlpha(0.2f);
                             updateButton.setEnabled(false);
+                            updateButton.setAlpha(0.1f);
                             updateButton.setVisibility(View.VISIBLE);
                             break;
                         case MSG_UPDATE_COMPLETED:
                             updateButton.setEnabled(true);
                             updateButton.setAlpha(1f);
-                            //updateButton.setVisibility(View.GONE);
                             valuteAdapter.notifyDataSetChanged();
                             break;
                     }
@@ -126,9 +126,8 @@ public class MainActivity extends AppCompatActivity {
                 mHandler.sendEmptyMessage(MSG_UPDATE_IN_PROGRESS);
                 Log.d("MyLog", "update button clicked... " + mHandler.obtainMessage());
                 updateData();
-
                 try {
-                    takePause(3000);
+                    takePause(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -159,6 +158,15 @@ public class MainActivity extends AppCompatActivity {
                 valuteAdapter.notifyDataSetChanged();
             }
         });
+        converterButton.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, ConverterActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     protected void setValuteRecycler(List<Valute> valuteList) {

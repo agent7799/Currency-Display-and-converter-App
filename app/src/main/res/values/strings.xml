@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">Currency Display</string>
-    <string name="app_text">App</string>
+    <string name="app_name">Курс Валют</string>
+    <string name="converter_activity">Converter Display</string>
+    <string name="app_text">Курс Валют</string>
     <string name="currency_text">Курсы Валют</string>
     <string name="sales_icon">Sales</string>
     <string name="contacts_text">Contacts</string>
@@ -10,9 +11,12 @@
     <string name="info_text">Loading Currency List...</string>
     <string name="update">Обновить</string>
     <string name="remove">Удалить</string>
+    <string name="back_button">Назад</string>
+    <string name="converter_button">Конвертер валют</string>
     <string name="insert">Вставить</string>
     <string name="dateOfUpdate">Время обновления</string>
-
+    <string name="converter_title">Конвертирование валют</string>
+    <string name="title_activity_main2">MainActivity2</string>
 
 
 </resources>
