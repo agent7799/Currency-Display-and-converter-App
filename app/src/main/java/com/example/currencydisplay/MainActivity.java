@@ -2,21 +2,18 @@ package com.example.currencydisplay;
 
 import static com.google.gson.JsonParser.parseReader;
 import static com.google.gson.JsonParser.parseString;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -25,13 +22,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.*;
-import java.sql.Time;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -39,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_VALUTE = "Valute";
     private final String currencies = "https://www.cbr-xml-daily.ru/daily_json.js";
     private static List<Valute> valuteList = new ArrayList<>();
+    private static int progress;
+    private Handler mHandler = new Handler();
+
 
     private Thread secThread;
 
@@ -50,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
 
                 parseJsonToValutesList(readJsonDataFromWeb(currencies));
+//                GetURLData getURLData = new GetURLData();
+//                getURLData.execute(currencies);
 
             }
         };
@@ -57,11 +57,10 @@ public class MainActivity extends AppCompatActivity {
         secThread.start();
     }
 
-
     private TextView infoTextView;
-    private TextView dateOfUpdate;
+    private TextView dateOfUpdateTextView;
     private ProgressBar progressBar;
-    private Button updateButton;
+
 
     RecyclerView valuteRecycler;
     ValuteAdapter valuteAdapter;
@@ -73,13 +72,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         infoTextView = findViewById(R.id.infoTextView);
-        dateOfUpdate = findViewById(R.id.dateOfUpdate);
-
+        dateOfUpdateTextView = findViewById(R.id.dateOfUpdate);
         progressBar = findViewById(R.id.progressbar);
-        updateButton = findViewById(R.id.updateButton);
+
+        Button updateButton = findViewById(R.id.updateButton);
+        Button removeButton = findViewById(R.id.removeButton);
+        Button insertButton = findViewById(R.id.insertButton);
+
 
         GetURLData getURLData = new GetURLData();
         getURLData.execute(currencies);
+
+
         setValuteRecycler(valuteList);
 
 
@@ -88,9 +92,34 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 updateData();
-
                 valuteAdapter.notifyDataSetChanged();
+
                 }
+        });
+        removeButton.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onClick(View view) {
+                int index = 0;
+                valuteList.remove(index);
+                valuteAdapter.notifyItemRemoved(index);
+                valuteAdapter.notifyDataSetChanged();
+            }
+        });
+
+        insertButton.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onClick(View view) {
+                int insertIndex = 0;
+                valuteList.add(insertIndex, new Valute(
+                        insertIndex,
+                        11,
+                        "Nominal",
+                        (long) (1234678)));
+                valuteAdapter.notifyItemInserted(insertIndex);
+                valuteAdapter.notifyDataSetChanged();
+            }
         });
     }
 
@@ -110,34 +139,29 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             infoTextView.setVisibility(View.VISIBLE);
-            infoTextView.setText("Loading Currency List ...");
+            infoTextView.setText("Загрузка списка: ...");
             progressBar.setVisibility(View.VISIBLE); // показываем индикатор прогресса
-            //horizontalProgressBar.setProgress(0);
         }
 
         @Override
         protected Void doInBackground(String... strings) {
 
             parseJsonToValutesList(readJsonDataFromWeb(strings[0]));
-
+            publishProgress(progress);
             return null;
         }
 
         @Override
         protected void onProgressUpdate(Integer... progress) {
             super.onProgressUpdate(progress);
-            infoTextView.setText("Loading Currency: " + progress[0]);
+            infoTextView.setText("Загрузка списка: " + progress[0]);
         }
-
-//        private void getFloor(int floor) throws InterruptedException {
-//            TimeUnit.MILLISECONDS.sleep(100);
-//        }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            infoTextView.setText("Кот залез на крышу");
+            infoTextView.setText("Загрузка списка: завершено");
             infoTextView.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.INVISIBLE); // прячем бесконечный индикатор
             valuteAdapter.notifyDataSetChanged();
@@ -148,10 +172,8 @@ public class MainActivity extends AppCompatActivity {
         JsonObject jsonObject = new JsonObject();
         JsonArray jsonArray = new JsonArray();
         String[] res;
+        progress = 0;
 
-//        for(int i = 0 ; i < jsonArray.size() ; i++){
-//            jsonArray.remove(i);
-//        }
         URL url = null;
         try {
             url = new URL(link);
@@ -166,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
             //date = jsonObject.get("Date").toString();
             Date date = new Date();
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-            dateOfUpdate.setText("Время обновления: " + formatter.format(date));
+            dateOfUpdateTextView.setText("Время обновления: " + formatter.format(date));
 
             String val = jsonObject.get(TAG_VALUTE).toString().substring(1, jsonObject.get(TAG_VALUTE).toString().length() - 1);
             res = val.split("\\},");
@@ -177,11 +199,17 @@ public class MainActivity extends AppCompatActivity {
                     res[i] = res[i].substring(6);
                 }
                 jsonArray.add(parseString(res[i]).getAsJsonObject());
+                progress = i;
             }
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
         Log.d("MyLog", jsonArray.size() + " elements of JsonArray created: " + jsonArray);
+
+
+
         return jsonArray;
 
     }
@@ -195,11 +223,19 @@ public class MainActivity extends AppCompatActivity {
                     obj.get("Nominal").getAsInt(),
                     obj.get("Name").getAsString(),
                     (long) (obj.get("Value").getAsDouble() * 100)));
-            //getFloor(counter);
-            //publishProgress(++counter);
+
+            try {
+                takePause(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         }
         Log.d("MyLog", " list of " + valuteList.size() + " valutes created by createValuteList...");
     }
 
+    private void takePause(int step) throws InterruptedException {
+        TimeUnit.MILLISECONDS.sleep(10);
+    }
 
 }

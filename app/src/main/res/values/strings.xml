@@ -9,6 +9,8 @@
     <string name="filter_text">Main</string>
     <string name="info_text">Loading Currency List...</string>
     <string name="update">Обновить</string>
+    <string name="remove">Удалить</string>
+    <string name="insert">Вставить</string>
     <string name="dateOfUpdate">Время обновления</string>
 
 
