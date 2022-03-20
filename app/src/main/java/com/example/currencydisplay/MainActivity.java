@@ -2,6 +2,8 @@ package com.example.currencydisplay;
 
 import static com.google.gson.JsonParser.parseReader;
 import static com.google.gson.JsonParser.parseString;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,6 +11,8 @@ import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -32,38 +36,41 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG_VALUTE = "Valute";
+    private static final int MSG_UPDATE_NONE = 0;
+    private static final int MSG_UPDATE_IN_PROGRESS = 1;
+    private static final int MSG_UPDATE_COMPLETED = 2;
+
     private final String currencies = "https://www.cbr-xml-daily.ru/daily_json.js";
     private static List<Valute> valuteList = new ArrayList<>();
     private static int progress;
-    private Handler mHandler = new Handler();
-
-
-    private Thread secThread;
-
     private RecyclerView.LayoutManager layoutManager;
-
-    private void updateData() {
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-
-                parseJsonToValutesList(readJsonDataFromWeb(currencies));
-//                GetURLData getURLData = new GetURLData();
-//                getURLData.execute(currencies);
-
-            }
-        };
-        secThread = new Thread(runnable);
-        secThread.start();
-    }
 
     private TextView infoTextView;
     private TextView dateOfUpdateTextView;
     private ProgressBar progressBar;
 
-
     RecyclerView valuteRecycler;
     ValuteAdapter valuteAdapter;
+
+    Handler mHandler;
+
+
+    private void updateData() {
+        //Start new thread
+        Thread secThread = new Thread(updater);
+        secThread.start();
+        //Same:   new Thread(updater).start();
+
+    }
+
+    private Runnable updater = new Runnable(){
+            @Override
+            public void run() {
+
+                parseJsonToValutesList(readJsonDataFromWeb(currencies));
+
+            }
+    };
 
 
     @Override
@@ -79,21 +86,53 @@ public class MainActivity extends AppCompatActivity {
         Button removeButton = findViewById(R.id.removeButton);
         Button insertButton = findViewById(R.id.insertButton);
 
+        setValuteRecycler(valuteList);
 
+        //start heavy task in not main thread
         GetURLData getURLData = new GetURLData();
         getURLData.execute(currencies);
 
-
-        setValuteRecycler(valuteList);
+        mHandler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
+            @Override
+            public boolean handleMessage(@NonNull Message message) {
+                    switch (message.what) {
+                        case MSG_UPDATE_NONE:
+                            updateButton.setEnabled(true);
+                            //updateButton.setAlpha(0.5f);
+                            updateButton.setVisibility(View.VISIBLE);
+                            break;
+                        case MSG_UPDATE_IN_PROGRESS:
+                            updateButton.setAlpha(0.2f);
+                            updateButton.setEnabled(false);
+                            updateButton.setVisibility(View.VISIBLE);
+                            break;
+                        case MSG_UPDATE_COMPLETED:
+                            updateButton.setEnabled(true);
+                            updateButton.setAlpha(1f);
+                            //updateButton.setVisibility(View.GONE);
+                            valuteAdapter.notifyDataSetChanged();
+                            break;
+                    }
+                mHandler.sendEmptyMessage(MSG_UPDATE_NONE);
+                return true;
+            }
+        });
 
 
         updateButton.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onClick(View view) {
+                mHandler.sendEmptyMessage(MSG_UPDATE_IN_PROGRESS);
+                Log.d("MyLog", "update button clicked... " + mHandler.obtainMessage());
                 updateData();
-                valuteAdapter.notifyDataSetChanged();
 
+                try {
+                    takePause(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                mHandler.sendEmptyMessage(MSG_UPDATE_COMPLETED);
                 }
         });
         removeButton.setOnClickListener(new View.OnClickListener() {
@@ -106,7 +145,6 @@ public class MainActivity extends AppCompatActivity {
                 valuteAdapter.notifyDataSetChanged();
             }
         });
-
         insertButton.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
@@ -147,7 +185,8 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(String... strings) {
 
             parseJsonToValutesList(readJsonDataFromWeb(strings[0]));
-            publishProgress(progress);
+
+            //publishProgress(progress);
             return null;
         }
 
@@ -225,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
                     (long) (obj.get("Value").getAsDouble() * 100)));
 
             try {
-                takePause(100);
+                takePause(5);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -235,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void takePause(int step) throws InterruptedException {
-        TimeUnit.MILLISECONDS.sleep(10);
+        TimeUnit.MILLISECONDS.sleep(step);
     }
 
 }
