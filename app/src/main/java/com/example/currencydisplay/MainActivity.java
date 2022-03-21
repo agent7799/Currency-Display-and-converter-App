@@ -284,7 +284,7 @@ public class MainActivity extends AppCompatActivity  {
                     i,
                     obj.get("Nominal").getAsInt(),
                     obj.get("Name").getAsString(),
-                    (long) (obj.get("Value").getAsDouble() * 100)));
+                    (long) (obj.get("Value").getAsDouble()*100)));
 
             try {
                 takePause(5);
