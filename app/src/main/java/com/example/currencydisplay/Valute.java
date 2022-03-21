@@ -3,6 +3,9 @@ package com.example.currencydisplay;
 class Valute {
     private int id;
     private int nominal;
+    private String name;
+    private double value;
+
 
     public Valute(int id, int nominal, String name, Long value) {
         this.id = id;
@@ -35,16 +38,13 @@ class Valute {
         this.name = name;
     }
 
-    public Long getValue() {
+    public double getValue() {
         return value;
     }
 
     public void setValue(Long value) {
         this.value = value;
     }
-
-    private String name;
-    private Long value;
 
 
 }

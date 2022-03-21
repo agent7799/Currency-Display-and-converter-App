@@ -35,8 +35,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
-public class MainActivity extends AppCompatActivity implements ValuteAdapter.ListItemClickListener {
-
+public class MainActivity extends AppCompatActivity  {
+//implements ValuteAdapter.ListItemClickListener
     private static final String TAG_VALUTE = "Valute";
     private static final int MSG_UPDATE_NONE = 0;
     private static final int MSG_UPDATE_IN_PROGRESS = 1;
@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements ValuteAdapter.Lis
     ValuteAdapter valuteAdapter;
 
     Handler mHandler;
-
 
     private void updateData() {
         //Start new thread
@@ -121,7 +120,6 @@ public class MainActivity extends AppCompatActivity implements ValuteAdapter.Lis
             }
         });
 
-
         updateButton.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
@@ -174,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements ValuteAdapter.Lis
             @Override
             public void onClick(View view) {
 
-                Log.d("MyLog", "onClickMain " + " ");
+                Log.d("MyLog", "itemClick " +  " ");
             }
         });
 
@@ -188,12 +186,13 @@ public class MainActivity extends AppCompatActivity implements ValuteAdapter.Lis
         valuteRecycler.setAdapter(valuteAdapter);
     }
 
-    @Override
-    public void onListItemClick(int clickedItemIndex) {
-        //clickedItemIndex;
-        Intent mIntent = new Intent (MainActivity.this, ConverterActivity.class);
-        startActivity(mIntent);
-    }
+//    @Override
+//    public void onListItemClick(int clickedItemIndex) {
+//       // clickedItemIndex =;
+//        Log.d("MyLog", "itemClick " +  "__________");
+//        Intent mIntent = new Intent (MainActivity.this, ConverterActivity.class);
+//        startActivity(mIntent);
+//    }
 
     private class GetURLData extends AsyncTask<String, Integer, Void> {
 

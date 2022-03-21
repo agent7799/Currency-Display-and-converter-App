@@ -20,6 +20,14 @@ public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteView
     static List<Valute> valutes;
 
 
+    public interface mClickListener {
+        public void mClick(View v, int position);
+    }
+//    public interface ListItemClickListener {
+//        void onListItemClick(int clickedItemIndex);
+//    }
+
+
     public ValuteAdapter(Context context, List<Valute> valutes) {
         this.context = context;
         this.valutes = valutes;
@@ -39,9 +47,18 @@ public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteView
         String text = (position + 1)
                 + "\t " + valutes.get(position).getNominal() + " "
                 + valutes.get(position).getName() + "\n"
-                + "\t\t\t\t" + valutes.get(position).getValue() + " руб.";
+                + "\t\t\t\t" + valutes.get(position).getValue()/100 + " руб.";
 
         holder.valuteTitle.setText(text);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Context context = view.getContext();
+                Intent intent = new Intent(context, ConverterActivity.class);
+                context.startActivity(intent);
+            }
+        });
 
     }
 
@@ -50,38 +67,32 @@ public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteView
         return valutes.size();
     }
 
-    public interface ListItemClickListener {
-        void onListItemClick(int clickedItemIndex);
-    }
 
 
-    public static final class ValuteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+    public static final class ValuteViewHolder extends RecyclerView.ViewHolder  {
+//implements View.OnClickListener
         TextView valuteTitle;
 
         public ValuteViewHolder(@NonNull View itemView) {
             super(itemView);
             valuteTitle = itemView.findViewById(R.id.valuteTitle);
 
-            itemView.setOnClickListener(this);
+            //itemView.setOnClickListener(this);
 
         }
+
+
 //implements View.OnClickListener
-        @Override
-        public void onClick(View view) {
-            Context context = view.getContext();
-            Intent intent = new Intent(context, ConverterActivity.class);
-            context.startActivity(intent);
-
-            itemClick(getAdapterPosition());
-            //Log.d("MyLog", "onClick " + getAdapterPosition() + " ");
-        }
-
-        private Valute itemClick(int position){
-            Valute valute = valutes.get(position);;
-            //Log.d("MyLog", "itemClick " + position + " ");
-            return valute;
-        }
+//        @Override
+//        public void onClick(View view) {
+//
+//            int clickedPosition = getAdapterPosition();
+//            Context context = view.getContext();
+//            Intent intent = new Intent(context, ConverterActivity.class);
+//            context.startActivity(intent);
+//            Log.d("MyLog", "itemClick " + clickedPosition + " ");
+//        }
 
     }
 }

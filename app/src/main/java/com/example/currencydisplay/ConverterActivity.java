@@ -29,8 +29,6 @@ public class ConverterActivity extends Activity {
             @Override
             public void onClick(View view) {
                 finish();
-//                Intent intent = new Intent(ConverterActivity.this, MainActivity.class);
-//                startActivity(intent);
             }
         });
         calculateButton.setOnClickListener(new View.OnClickListener() {
