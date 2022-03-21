@@ -18,7 +18,6 @@ import java.text.DecimalFormat;
 public class ConverterActivity extends Activity {
 
     int clickedItemIndex;
-
     String name;
     double rate;
     int nominal;

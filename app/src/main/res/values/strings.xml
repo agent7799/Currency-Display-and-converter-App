@@ -2,7 +2,7 @@
     <string name="app_name">Курс Валют</string>
     <string name="converter_activity">Converter Display</string>
     <string name="app_text">Курс Валют</string>
-    <string name="currency_text">Курсы Валют</string>
+    <string name="currency_text">Курсы Валют ЦБ</string>
     <string name="sales_icon">Sales</string>
     <string name="contacts_text">Contacts</string>
     <string name="about_text">About</string>

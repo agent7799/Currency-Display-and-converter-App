@@ -2,6 +2,8 @@ package com.example.currencydisplay;
 
 import static com.google.gson.JsonParser.parseReader;
 import static com.google.gson.JsonParser.parseString;
+import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuView;
@@ -29,6 +31,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.*;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,7 +50,8 @@ public class MainActivity extends AppCompatActivity  {
     private RecyclerView.LayoutManager layoutManager;
 
     private TextView infoTextView;
-    private TextView dateOfUpdateTextView;
+    private TextView dateTextView;
+    private TextView updateTextView;
     private ProgressBar progressBar;
 
     RecyclerView valuteRecycler;
@@ -79,7 +83,8 @@ public class MainActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_main);
 
         infoTextView = findViewById(R.id.infoTextView);
-        dateOfUpdateTextView = findViewById(R.id.dateOfUpdate);
+        dateTextView = findViewById(R.id.dateTextView);
+        updateTextView = findViewById(R.id.updateTextView);
         progressBar = findViewById(R.id.progressbar);
 
         setValuteRecycler(valuteList);
@@ -168,14 +173,6 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
-        valuteRecycler.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Log.d("MyLog", "itemClick " +  " ");
-            }
-        });
-
     }
 
     protected void setValuteRecycler(List<Valute> valuteList) {
@@ -185,14 +182,6 @@ public class MainActivity extends AppCompatActivity  {
         valuteAdapter = new ValuteAdapter(this, valuteList);
         valuteRecycler.setAdapter(valuteAdapter);
     }
-
-//    @Override
-//    public void onListItemClick(int clickedItemIndex) {
-//       // clickedItemIndex =;
-//        Log.d("MyLog", "itemClick " +  "__________");
-//        Intent mIntent = new Intent (MainActivity.this, ConverterActivity.class);
-//        startActivity(mIntent);
-//    }
 
     private class GetURLData extends AsyncTask<String, Integer, Void> {
 
@@ -248,10 +237,20 @@ public class MainActivity extends AppCompatActivity  {
             JsonElement root = parseReader(new BufferedReader(new InputStreamReader(in)));
             jsonObject = root.getAsJsonObject();
 
-            //date = jsonObject.get("Date").toString();
-            Date date = new Date();
+            String jsonDate = String.valueOf(jsonObject.get("Date"));
+
+            LocalDate date = LocalDate.now();
+            String text = date.format(ISO_OFFSET_DATE_TIME);
+            LocalDate parsedDate = LocalDate.parse(text, formatter);
+
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-            dateOfUpdateTextView.setText("Время обновления: " + formatter.format(date));
+            SimpleDateFormat jsonFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.ESSEX");
+
+            //dateTextView.setText("на : " + formatter.format(date));
+            dateTextView.setText("на : " + jsonFormatter.format(jsonDate));
+
+            updateTextView.setText("Обновлено: " + formatter.format(date));
+
 
             String val = jsonObject.get(TAG_VALUTE).toString().substring(1, jsonObject.get(TAG_VALUTE).toString().length() - 1);
             res = val.split("\\},");
