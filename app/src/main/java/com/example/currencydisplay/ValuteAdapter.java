@@ -22,12 +22,6 @@ public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteView
     Context context;
     static List<Valute> valutes;
 
-
-//    public interface ListItemClickListener {
-//        void onListItemClick(int clickedItemIndex);
-//    }
-
-
     public ValuteAdapter(Context context, List<Valute> valutes) {
         this.context = context;
         this.valutes = valutes;
@@ -69,9 +63,6 @@ public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteView
     public int getItemCount() {
         return valutes.size();
     }
-
-
-
 
     class ValuteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView valuteTitle;

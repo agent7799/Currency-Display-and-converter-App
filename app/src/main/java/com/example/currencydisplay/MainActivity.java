@@ -33,6 +33,9 @@ import java.net.*;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -239,30 +242,19 @@ public class MainActivity extends AppCompatActivity  {
             JsonElement root = parseReader(new BufferedReader(new InputStreamReader(in)));
             jsonObject = root.getAsJsonObject();
 
-            Log.d("MyLog", jsonObject.get("Date").toString());
-            Log.d("MyLog", jsonObject.get("Timestamp").toString());
+            String jsonDateString = jsonObject.get("Date").toString();
+            String timestampString = jsonObject.get("Timestamp").toString();
 
-            String jsonDate = jsonObject.get("Date").toString();
-            String timestamp = jsonObject.get("Timestamp").toString();
+            LocalDateTime jsonDate = LocalDateTime.parse(jsonDateString.substring(1,jsonDateString.length()-1), ISO_OFFSET_DATE_TIME);
+            LocalDateTime timestamp = LocalDateTime.parse(timestampString.substring(1,timestampString.length()-1), ISO_OFFSET_DATE_TIME);
 
-            Log.d("MyLog", jsonDate);
-            Log.d("MyLog", timestamp);
+            DateTimeFormatter formatterHMS = DateTimeFormatter.ofPattern("dd-MM-yyyy H:mm:ss");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-            //LocalDate jsonDate = LocalDate.parse(jsonObject.get("Date").toString());
-            //LocalDate timestamp = LocalDate.parse(jsonObject.get("Timestamp").toString());
-
-
-//            LocalDate date = LocalDate.now();
-//            String text = date.format(ISO_OFFSET_DATE_TIME);
-            //LocalDate parseDate = LocalDate.parse(text, ISO_OFFSET_DATE_TIME);
-
-//            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-//            SimpleDateFormat jsonFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-
-            //dateTextView.setText("на : " + formatter.format(date));
-            //dateTextView.setText("на : " + jsonDate.format(ISO_OFFSET_DATE_TIME));
-            dateTextView.setText("на : " + jsonDate);
-            timestampTextView.setText("Обновлено : " + jsonDate);
+            dateTextView.setText("на : " + jsonDate.format(formatter));
+            timestampTextView.setText("на : " + timestamp.format(formatterHMS));
+//            dateTextView.setText("на : " + jsonDate);
+//            timestampTextView.setText("Обновлено : " + timestamp.format());
 
 
             //updateTextView.setText("Обновлено: " + timestamp.format(ISO_OFFSET_DATE_TIME));
