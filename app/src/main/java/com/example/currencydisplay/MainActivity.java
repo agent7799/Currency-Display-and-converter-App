@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity  {
     private static final int MSG_UPDATE_COMPLETED = 2;
 
     private final String currencies = "https://www.cbr-xml-daily.ru/daily_json.js";
-    private static List<Valute> valuteList = new ArrayList<>();
+    protected static List<Valute> valuteList = new ArrayList<>();
     private RecyclerView.LayoutManager layoutManager;
 
     private TextView infoTextView;
@@ -284,7 +284,7 @@ public class MainActivity extends AppCompatActivity  {
                     i,
                     obj.get("Nominal").getAsInt(),
                     obj.get("Name").getAsString(),
-                    (long) (obj.get("Value").getAsDouble()*100)));
+                    (obj.get("Value").getAsDouble())));
 
             try {
                 takePause(5);

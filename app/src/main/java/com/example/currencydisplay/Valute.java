@@ -7,7 +7,7 @@ class Valute {
     private double value;
 
 
-    public Valute(int id, int nominal, String name, Long value) {
+    public Valute(int id, int nominal, String name, double value) {
         this.id = id;
         this.nominal = nominal;
         this.name = name;
