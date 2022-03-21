@@ -1,6 +1,10 @@
 package com.example.currencydisplay;
 
+import android.app.Activity;
+import android.content.ClipData;
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,18 +17,20 @@ import java.util.List;
 public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteViewHolder>{
 
     Context context;
-    List<Valute> valutes;
+    static List<Valute> valutes;
+
 
     public ValuteAdapter(Context context, List<Valute> valutes) {
         this.context = context;
         this.valutes = valutes;
+
     }
 
     @NonNull
     @Override
     public ValuteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View valuteItems = LayoutInflater.from(context).inflate(R.layout.valute_item, parent, false);
 
+        View valuteItems = LayoutInflater.from(context).inflate(R.layout.valute_item, parent, false);
         return new ValuteViewHolder(valuteItems);
     }
 
@@ -36,6 +42,7 @@ public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteView
                 + "\t\t\t\t" + valutes.get(position).getValue() + " руб.";
 
         holder.valuteTitle.setText(text);
+
     }
 
     @Override
@@ -43,7 +50,12 @@ public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteView
         return valutes.size();
     }
 
-    public static final class ValuteViewHolder extends RecyclerView.ViewHolder{
+    public interface ListItemClickListener {
+        void onListItemClick(int clickedItemIndex);
+    }
+
+
+    public static final class ValuteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView valuteTitle;
 
@@ -51,9 +63,26 @@ public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteView
             super(itemView);
             valuteTitle = itemView.findViewById(R.id.valuteTitle);
 
+            itemView.setOnClickListener(this);
+
         }
+//implements View.OnClickListener
+        @Override
+        public void onClick(View view) {
+            Context context = view.getContext();
+            Intent intent = new Intent(context, ConverterActivity.class);
+            context.startActivity(intent);
+
+            itemClick(getAdapterPosition());
+            //Log.d("MyLog", "onClick " + getAdapterPosition() + " ");
+        }
+
+        private Valute itemClick(int position){
+            Valute valute = valutes.get(position);;
+            //Log.d("MyLog", "itemClick " + position + " ");
+            return valute;
+        }
+
     }
-
-
 }
 

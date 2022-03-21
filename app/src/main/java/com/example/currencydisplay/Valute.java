@@ -1,12 +1,5 @@
 package com.example.currencydisplay;
 
-import java.net.URL;
-import java.sql.Time;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-
 class Valute {
     private int id;
     private int nominal;

@@ -17,6 +17,11 @@
     <string name="dateOfUpdate">Время обновления</string>
     <string name="converter_title">Конвертирование валют</string>
     <string name="title_activity_main2">MainActivity2</string>
+    <string name="calculate_button">Конвертировать</string>
+    <string name="currency_name">Название валюты</string>
+    <string name="result">Результат</string>
+    <string name="sum_roubles">Введите сумму в рублях</string>
+
 
 
 </resources>

@@ -4,6 +4,7 @@ import static com.google.gson.JsonParser.parseReader;
 import static com.google.gson.JsonParser.parseString;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
@@ -15,6 +16,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -33,7 +35,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ValuteAdapter.ListItemClickListener {
 
     private static final String TAG_VALUTE = "Valute";
     private static final int MSG_UPDATE_NONE = 0;
@@ -42,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
 
     private final String currencies = "https://www.cbr-xml-daily.ru/daily_json.js";
     private static List<Valute> valuteList = new ArrayList<>();
-    private static int progress;
     private RecyclerView.LayoutManager layoutManager;
 
     private TextView infoTextView;
@@ -82,12 +83,14 @@ public class MainActivity extends AppCompatActivity {
         dateOfUpdateTextView = findViewById(R.id.dateOfUpdate);
         progressBar = findViewById(R.id.progressbar);
 
+        setValuteRecycler(valuteList);
+
         Button updateButton = findViewById(R.id.updateButton);
         Button removeButton = findViewById(R.id.removeButton);
         Button insertButton = findViewById(R.id.insertButton);
         Button converterButton = findViewById(R.id.converterButton);
 
-        setValuteRecycler(valuteList);
+
 
         //start heavy task in not main thread
         GetURLData getURLData = new GetURLData();
@@ -167,6 +170,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        valuteRecycler.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Log.d("MyLog", "onClickMain " + " ");
+            }
+        });
+
     }
 
     protected void setValuteRecycler(List<Valute> valuteList) {
@@ -175,6 +186,13 @@ public class MainActivity extends AppCompatActivity {
         valuteRecycler.setLayoutManager(layoutManager);
         valuteAdapter = new ValuteAdapter(this, valuteList);
         valuteRecycler.setAdapter(valuteAdapter);
+    }
+
+    @Override
+    public void onListItemClick(int clickedItemIndex) {
+        //clickedItemIndex;
+        Intent mIntent = new Intent (MainActivity.this, ConverterActivity.class);
+        startActivity(mIntent);
     }
 
     private class GetURLData extends AsyncTask<String, Integer, Void> {
@@ -219,7 +237,6 @@ public class MainActivity extends AppCompatActivity {
         JsonObject jsonObject = new JsonObject();
         JsonArray jsonArray = new JsonArray();
         String[] res;
-        progress = 0;
 
         URL url = null;
         try {
@@ -246,14 +263,13 @@ public class MainActivity extends AppCompatActivity {
                     res[i] = res[i].substring(6);
                 }
                 jsonArray.add(parseString(res[i]).getAsJsonObject());
-                progress = i;
             }
 
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.d("MyLog", jsonArray.size() + " elements of JsonArray created: " + jsonArray);
+        Log.d("MyLog", jsonArray.size() + " elements of JsonArray created");
 
 
 
