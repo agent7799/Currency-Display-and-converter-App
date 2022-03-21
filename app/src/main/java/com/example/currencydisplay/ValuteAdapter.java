@@ -11,11 +11,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.text.DecimalFormat;
 import java.util.List;
 
 
 public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteViewHolder>{
 
+    private DecimalFormat df = new DecimalFormat("0.00");
     Context context;
     static List<Valute> valutes;
 
@@ -44,7 +47,7 @@ public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteView
         String text = (position + 1)
                 + "\t " + valutes.get(position).getNominal() + " "
                 + valutes.get(position).getName() + "\n"
-                + "\t\t\t\t" + valutes.get(position).getValue() + " руб.";
+                + "\t\t\t\t" + df.format(valutes.get(position).getValue()) + " руб.";
 
         holder.valuteTitle.setText(text);
 

@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.*;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -44,10 +45,11 @@ public class MainActivity extends AppCompatActivity  {
     private static final int MSG_UPDATE_NONE = 0;
     private static final int MSG_UPDATE_IN_PROGRESS = 1;
     private static final int MSG_UPDATE_COMPLETED = 2;
-
     private final String currencies = "https://www.cbr-xml-daily.ru/daily_json.js";
     protected static List<Valute> valuteList = new ArrayList<>();
     private RecyclerView.LayoutManager layoutManager;
+
+
 
     private TextView infoTextView;
     private TextView dateTextView;
@@ -297,8 +299,7 @@ public class MainActivity extends AppCompatActivity  {
                     i,
                     obj.get("Nominal").getAsInt(),
                     obj.get("Name").getAsString(),
-                    (obj.get("Value").getAsDouble())));
-
+                    obj.get("Value").getAsDouble()));
             try {
                 takePause(5);
             } catch (InterruptedException e) {
