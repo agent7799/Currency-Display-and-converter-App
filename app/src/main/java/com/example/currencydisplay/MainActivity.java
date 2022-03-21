@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity  {
 
     private TextView infoTextView;
     private TextView dateTextView;
-    private TextView updateTextView;
+    private TextView timestampTextView;
     private ProgressBar progressBar;
 
     RecyclerView valuteRecycler;
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity  {
 
         infoTextView = findViewById(R.id.infoTextView);
         dateTextView = findViewById(R.id.dateTextView);
-        updateTextView = findViewById(R.id.updateTextView);
+        timestampTextView = findViewById(R.id.timestampTextView);
         progressBar = findViewById(R.id.progressbar);
 
         setValuteRecycler(valuteList);
@@ -237,19 +237,33 @@ public class MainActivity extends AppCompatActivity  {
             JsonElement root = parseReader(new BufferedReader(new InputStreamReader(in)));
             jsonObject = root.getAsJsonObject();
 
-            String jsonDate = String.valueOf(jsonObject.get("Date"));
+            Log.d("MyLog", jsonObject.get("Date").toString());
+            Log.d("MyLog", jsonObject.get("Timestamp").toString());
 
-            LocalDate date = LocalDate.now();
-            String text = date.format(ISO_OFFSET_DATE_TIME);
-            LocalDate parsedDate = LocalDate.parse(text, formatter);
+            String jsonDate = jsonObject.get("Date").toString();
+            String timestamp = jsonObject.get("Timestamp").toString();
 
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-            SimpleDateFormat jsonFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.ESSEX");
+            Log.d("MyLog", jsonDate);
+            Log.d("MyLog", timestamp);
+
+            //LocalDate jsonDate = LocalDate.parse(jsonObject.get("Date").toString());
+            //LocalDate timestamp = LocalDate.parse(jsonObject.get("Timestamp").toString());
+
+
+//            LocalDate date = LocalDate.now();
+//            String text = date.format(ISO_OFFSET_DATE_TIME);
+            //LocalDate parseDate = LocalDate.parse(text, ISO_OFFSET_DATE_TIME);
+
+//            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+//            SimpleDateFormat jsonFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 
             //dateTextView.setText("на : " + formatter.format(date));
-            dateTextView.setText("на : " + jsonFormatter.format(jsonDate));
+            //dateTextView.setText("на : " + jsonDate.format(ISO_OFFSET_DATE_TIME));
+            dateTextView.setText("на : " + jsonDate);
+            timestampTextView.setText("Обновлено : " + jsonDate);
 
-            updateTextView.setText("Обновлено: " + formatter.format(date));
+
+            //updateTextView.setText("Обновлено: " + timestamp.format(ISO_OFFSET_DATE_TIME));
 
 
             String val = jsonObject.get(TAG_VALUTE).toString().substring(1, jsonObject.get(TAG_VALUTE).toString().length() - 1);

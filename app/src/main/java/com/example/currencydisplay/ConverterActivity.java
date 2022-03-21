@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -62,7 +61,7 @@ public class ConverterActivity extends Activity {
                     Toast.makeText(ConverterActivity.this, R.string.sum_roubles, Toast.LENGTH_LONG).show();
                     } else {
                     sum = Double.parseDouble(String.valueOf(sum_field.getText())) / rate / nominal;
-                    result.setText(String.valueOf(df.format(sum)));
+                    result.setText(df.format(sum));
                 }
             }
         });
