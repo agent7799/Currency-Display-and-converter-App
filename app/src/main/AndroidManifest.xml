@@ -14,10 +14,12 @@
         <activity
             android:name=".ConverterActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:parentActivityName=".MainActivity"
             />
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:exported="true"
            >
             <intent-filter>

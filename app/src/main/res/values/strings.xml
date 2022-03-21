@@ -2,7 +2,7 @@
     <string name="app_name">Курс Валют</string>
     <string name="converter_activity">Converter Display</string>
     <string name="app_text">Курс Валют</string>
-    <string name="currency_text">Курсы Валют</string>
+    <string name="currency_text">Курсы Валют ЦБ</string>
     <string name="sales_icon">Sales</string>
     <string name="contacts_text">Contacts</string>
     <string name="about_text">About</string>
@@ -15,12 +15,13 @@
     <string name="converter_button">Конвертер валют</string>
     <string name="insert">Вставить</string>
     <string name="dateOfUpdate">Время обновления</string>
-    <string name="converter_title">Конвертирование валют</string>
+    <string name="converter_title">Конвертирование суммы</string>
     <string name="title_activity_main2">MainActivity2</string>
     <string name="calculate_button">Конвертировать</string>
     <string name="currency_name">Название валюты</string>
     <string name="result">Результат</string>
     <string name="sum_roubles">Введите сумму в рублях</string>
+    <string name="in_roubles">в рублях</string>
 
 
 

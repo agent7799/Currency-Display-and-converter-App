@@ -20,11 +20,6 @@ public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteView
     static List<Valute> valutes;
 
 
-//    public interface ListItemClickListener {
-//        void onListItemClick(int clickedItemIndex);
-//    }
-
-
     public ValuteAdapter(Context context, List<Valute> valutes) {
         this.context = context;
         this.valutes = valutes;
@@ -47,18 +42,6 @@ public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteView
                 + "\t\t\t\t" + valutes.get(position).getValue() + " руб.";
 
         holder.valuteTitle.setText(text);
-
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                int clickedPosition = getAdapterPosition();
-//                Context context = view.getContext();
-//                Class destinationActivity = ConverterActivity.class;
-//                Intent intent = new Intent(context, destinationActivity);
-//                intent.putExtra(Intent.EXTRA_INDEX, clickedPosition);
-//                context.startActivity(intent);
-//            }
-   //     });
 
     }
 
