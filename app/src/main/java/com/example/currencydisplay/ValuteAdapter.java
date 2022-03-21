@@ -45,18 +45,6 @@ public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteView
 
         holder.valuteTitle.setText(text);
 
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                int clickedPosition = getAdapterPosition();
-//                Context context = view.getContext();
-//                Class destinationActivity = ConverterActivity.class;
-//                Intent intent = new Intent(context, destinationActivity);
-//                intent.putExtra(Intent.EXTRA_INDEX, clickedPosition);
-//                context.startActivity(intent);
-//            }
-   //     });
-
     }
 
     @Override
@@ -74,7 +62,6 @@ public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteView
             itemView.setOnClickListener(this);
 
         }
-
 
         @Override
         public void onClick(View view) {

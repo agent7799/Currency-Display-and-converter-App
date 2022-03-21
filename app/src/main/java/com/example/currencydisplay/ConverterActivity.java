@@ -22,7 +22,12 @@ public class ConverterActivity extends Activity {
     int nominal;
     double sum;
 
-    private static final DecimalFormat df = new DecimalFormat("0.00");
+    private EditText sum_field;
+    private TextView valuteName;
+    private TextView result;
+
+    private static final DecimalFormat df = new DecimalFormat("###,##0.00");
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,9 +36,9 @@ public class ConverterActivity extends Activity {
 
         Button backButton = findViewById(R.id.backButton);
         Button calculateButton = findViewById(R.id.calculateButton);
-        EditText sum_field = findViewById(R.id.editSumText);
-        TextView valuteName = findViewById(R.id.valuteName);
-        TextView result = findViewById(R.id.result);
+        sum_field = findViewById(R.id.editSumText);
+        valuteName = findViewById(R.id.valuteName);
+        result = findViewById(R.id.result);
 
         Intent parentIntent = getIntent();
         if (parentIntent.hasExtra("clickedPosition")){

@@ -6,11 +6,9 @@ import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.MenuView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,7 +16,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -30,20 +27,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.*;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends AppCompatActivity  {
-//implements ValuteAdapter.ListItemClickListener
     private static final String TAG_VALUTE = "Valute";
     private static final int MSG_UPDATE_NONE = 0;
     private static final int MSG_UPDATE_IN_PROGRESS = 1;
@@ -95,9 +86,9 @@ public class MainActivity extends AppCompatActivity  {
         setValuteRecycler(valuteList);
 
         Button updateButton = findViewById(R.id.updateButton);
-        Button removeButton = findViewById(R.id.removeButton);
-        Button insertButton = findViewById(R.id.insertButton);
-        Button converterButton = findViewById(R.id.converterButton);
+        //Button removeButton = findViewById(R.id.removeButton);
+        //Button insertButton = findViewById(R.id.insertButton);
+        //Button converterButton = findViewById(R.id.converterButton);
 
 
 
@@ -111,7 +102,6 @@ public class MainActivity extends AppCompatActivity  {
                     switch (message.what) {
                         case MSG_UPDATE_NONE:
                             updateButton.setEnabled(true);
-                            //updateButton.setAlpha(0.5f);
                             updateButton.setVisibility(View.VISIBLE);
                             break;
                         case MSG_UPDATE_IN_PROGRESS:
@@ -145,38 +135,38 @@ public class MainActivity extends AppCompatActivity  {
                 mHandler.sendEmptyMessage(MSG_UPDATE_COMPLETED);
                 }
         });
-        removeButton.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onClick(View view) {
-                int index = 0;
-                valuteList.remove(index);
-                valuteAdapter.notifyItemRemoved(index);
-                valuteAdapter.notifyDataSetChanged();
-            }
-        });
-        insertButton.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onClick(View view) {
-                int insertIndex = 0;
-                valuteList.add(insertIndex, new Valute(
-                        insertIndex,
-                        11,
-                        "Nominal",
-                        (long) (1234678)));
-                valuteAdapter.notifyItemInserted(insertIndex);
-                valuteAdapter.notifyDataSetChanged();
-            }
-        });
-        converterButton.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, ConverterActivity.class);
-                startActivity(intent);
-            }
-        });
+//        removeButton.setOnClickListener(new View.OnClickListener() {
+//            @SuppressLint("NotifyDataSetChanged")
+//            @Override
+//            public void onClick(View view) {
+//                int index = 0;
+//                valuteList.remove(index);
+//                valuteAdapter.notifyItemRemoved(index);
+//                valuteAdapter.notifyDataSetChanged();
+//            }
+//        });
+//        insertButton.setOnClickListener(new View.OnClickListener() {
+//            @SuppressLint("NotifyDataSetChanged")
+//            @Override
+//            public void onClick(View view) {
+//                int insertIndex = 0;
+//                valuteList.add(insertIndex, new Valute(
+//                        insertIndex,
+//                        11,
+//                        "Nominal",
+//                        (long) (1234678)));
+//                valuteAdapter.notifyItemInserted(insertIndex);
+//                valuteAdapter.notifyDataSetChanged();
+//            }
+//        });
+//        converterButton.setOnClickListener(new View.OnClickListener() {
+//            @SuppressLint("NotifyDataSetChanged")
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(MainActivity.this, ConverterActivity.class);
+//                startActivity(intent);
+//            }
+//        });
 
     }
 
@@ -248,17 +238,11 @@ public class MainActivity extends AppCompatActivity  {
             LocalDateTime jsonDate = LocalDateTime.parse(jsonDateString.substring(1,jsonDateString.length()-1), ISO_OFFSET_DATE_TIME);
             LocalDateTime timestamp = LocalDateTime.parse(timestampString.substring(1,timestampString.length()-1), ISO_OFFSET_DATE_TIME);
 
-            DateTimeFormatter formatterHMS = DateTimeFormatter.ofPattern("dd-MM-yyyy H:mm:ss");
+            DateTimeFormatter formatterHMS = DateTimeFormatter.ofPattern("H:mm  dd-MM-yyyy ");
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
             dateTextView.setText("на : " + jsonDate.format(formatter));
-            timestampTextView.setText("на : " + timestamp.format(formatterHMS));
-//            dateTextView.setText("на : " + jsonDate);
-//            timestampTextView.setText("Обновлено : " + timestamp.format());
-
-
-            //updateTextView.setText("Обновлено: " + timestamp.format(ISO_OFFSET_DATE_TIME));
-
+            timestampTextView.setText("Последнее обновление : " + timestamp.format(formatterHMS));
 
             String val = jsonObject.get(TAG_VALUTE).toString().substring(1, jsonObject.get(TAG_VALUTE).toString().length() - 1);
             res = val.split("\\},");
