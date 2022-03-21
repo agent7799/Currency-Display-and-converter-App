@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,13 +17,17 @@ import java.text.DecimalFormat;
 public class ConverterActivity extends Activity {
 
     int clickedItemIndex;
-
     String name;
     double rate;
     int nominal;
     double sum;
 
-    private static final DecimalFormat df = new DecimalFormat("0.00");
+    private EditText sum_field;
+    private TextView valuteName;
+    private TextView result;
+
+    private static final DecimalFormat df = new DecimalFormat("###,##0.00");
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,9 +36,9 @@ public class ConverterActivity extends Activity {
 
         Button backButton = findViewById(R.id.backButton);
         Button calculateButton = findViewById(R.id.calculateButton);
-        EditText sum_field = findViewById(R.id.editSumText);
-        TextView valuteName = findViewById(R.id.valuteName);
-        TextView result = findViewById(R.id.result);
+        sum_field = findViewById(R.id.editSumText);
+        valuteName = findViewById(R.id.valuteName);
+        result = findViewById(R.id.result);
 
         Intent parentIntent = getIntent();
         if (parentIntent.hasExtra("clickedPosition")){
@@ -63,7 +66,7 @@ public class ConverterActivity extends Activity {
                     Toast.makeText(ConverterActivity.this, R.string.sum_roubles, Toast.LENGTH_LONG).show();
                     } else {
                     sum = Double.parseDouble(String.valueOf(sum_field.getText())) / rate / nominal;
-                    result.setText(String.valueOf(df.format(sum)));
+                    result.setText(df.format(sum));
                 }
             }
         });

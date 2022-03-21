@@ -6,7 +6,6 @@ class Valute {
     private String name;
     private double value;
 
-
     public Valute(int id, int nominal, String name, double value) {
         this.id = id;
         this.nominal = nominal;
