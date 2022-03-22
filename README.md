@@ -4,7 +4,7 @@ Android application to display list of currencies and rates fron Central Bank si
 
 
 
-Updated 21.03.2022
+Updated 23.03.2022
 
 Андроид приложение со следующими функциями:
 

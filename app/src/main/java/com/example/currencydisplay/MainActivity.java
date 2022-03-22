@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity  {
                 updateData();
                 mHandler.sendEmptyMessage(MSG_UPDATE_COMPLETED);
             };
-        }, 0L, 10L * 1000); // интервал - 60 000 миллисекунд, 0 миллисекунд до первого запуска.
+        }, 0L, 15 * 60L * 1000); // интервал - 60 000 миллисекунд, 0 миллисекунд до первого запуска.
 
 
         updateButton.setOnClickListener(new View.OnClickListener() {
