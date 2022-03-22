@@ -30,7 +30,10 @@ import java.net.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 
@@ -42,6 +45,10 @@ public class MainActivity extends AppCompatActivity  {
     private final String currencies = "https://www.cbr-xml-daily.ru/daily_json.js";
     protected static List<Valute> valuteList = new ArrayList<>();
     private RecyclerView.LayoutManager layoutManager;
+
+    private String jsonDateString;
+    private String timestampString;
+
 
     private boolean updateInProgress;
 
@@ -55,7 +62,7 @@ public class MainActivity extends AppCompatActivity  {
     RecyclerView valuteRecycler;
     ValuteAdapter valuteAdapter;
 
-    Handler mHandler;
+    private Handler mHandler;
 
     private void updateData() {
         //Start new thread
@@ -67,9 +74,9 @@ public class MainActivity extends AppCompatActivity  {
     private Runnable updater = new Runnable(){
         @Override
         public void run() {
-
+            //mHandler.sendEmptyMessage(MSG_UPDATE_IN_PROGRESS);
             parseJsonToValutesList(readJsonDataFromWeb(currencies));
-
+//            mHandler.sendEmptyMessage(MSG_UPDATE_COMPLETED);
         }
     };
 
@@ -112,21 +119,18 @@ public class MainActivity extends AppCompatActivity  {
                         valuteRecycler.setAlpha(0.5f);
                         //updateButton.setVisibility(View.VISIBLE);
                         infoTextView.setVisibility(View.VISIBLE);
-                        infoTextView.setText("Загрузка списка: ...");
+                        infoTextView.setText("Обновление списка: ...");
                         progressBar.setVisibility(View.VISIBLE); // показываем индикатор прогресса
-                        try {
-                            takePause(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                         break;
                     case MSG_UPDATE_COMPLETED:
                         updateButton.setEnabled(true);
                         updateButton.setAlpha(1f);
                         valuteRecycler.setAlpha(1f);
-                        infoTextView.setText("Загрузка списка: завершено");
+                        infoTextView.setText("Обновление завершено");
                         infoTextView.setVisibility(View.INVISIBLE);
                         progressBar.setVisibility(View.INVISIBLE); // прячем бесконечный индикатор
+                        dateTextView.setText(jsonDateString);
+                        timestampTextView.setText(timestampString);
                         valuteAdapter.notifyDataSetChanged();
                         break;
                 }
@@ -134,6 +138,20 @@ public class MainActivity extends AppCompatActivity  {
                 return true;
             }
         });
+
+        Timer myTimer = new Timer(); // Создаем таймер
+
+        myTimer.schedule(new TimerTask() { // Определяем задачу
+            @Override
+            public void run() {
+                //mHandler.post(updater);
+                mHandler.sendEmptyMessage(MSG_UPDATE_IN_PROGRESS);
+                Log.d("MyLog", "Scheduled task started every 10 s... ");
+                updateData();
+                mHandler.sendEmptyMessage(MSG_UPDATE_COMPLETED);
+            };
+        }, 0L, 10L * 1000); // интервал - 60 000 миллисекунд, 0 миллисекунд до первого запуска.
+
 
         updateButton.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NotifyDataSetChanged")
@@ -206,6 +224,8 @@ public class MainActivity extends AppCompatActivity  {
         protected Void doInBackground(String... strings) {
             mHandler.sendEmptyMessage(MSG_UPDATE_IN_PROGRESS);
             parseJsonToValutesList(readJsonDataFromWeb(strings[0]));
+//            dateTextView.setText(jsonDateString);
+//            timestampTextView.setText(timestampString);
             return null;
         }
 
@@ -217,8 +237,8 @@ public class MainActivity extends AppCompatActivity  {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            valuteAdapter.notifyDataSetChanged();
             mHandler.sendEmptyMessage(MSG_UPDATE_COMPLETED);
+            valuteAdapter.notifyDataSetChanged();
         }
     }
 
@@ -238,21 +258,21 @@ public class MainActivity extends AppCompatActivity  {
             JsonElement root = parseReader(new BufferedReader(new InputStreamReader(in)));
             jsonObject = root.getAsJsonObject();
 
-//            String jsonDateString = jsonObject.get("Date").toString();
-//            String timestampString = jsonObject.get("Timestamp").toString();
-//
+            jsonDateString = "на : " + jsonObject.get("Date").toString().substring(1, 11);
+            //timestampString = "Последнее обновление : " + jsonObject.get("Timestamp").toString().substring(1, 9);
+            timestampString = "Последнее обновление: " + "\n" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("H:mm:ss  dd-MM-yyyy"));
+
 //            LocalDateTime jsonDate = LocalDateTime.parse(jsonDateString.substring(1,jsonDateString.length()-1), ISO_OFFSET_DATE_TIME);
 //            LocalDateTime timestamp = LocalDateTime.parse(timestampString.substring(1,timestampString.length()-1), ISO_OFFSET_DATE_TIME);
 //
-//            DateTimeFormatter formatterHMS = DateTimeFormatter.ofPattern("H:mm  dd-MM-yyyy ");
+//            DateTimeFormatter formatterHMS = DateTimeFormatter.ofPattern("H:mm:ss  dd-MM-yyyy ");
 //            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 //
-//            dateTextView.setText("на : " + jsonDate.format(formatter));
-//            timestampTextView.setText("Последнее обновление : " + timestamp.format(formatterHMS));
+////            dateTextView.setText("на : " + jsonDate.format(formatter));
+////            timestampTextView.setText("Последнее обновление : " + timestamp.format(formatterHMS));
 //
-//            dateTextView.setText("на : " + jsonDateString);
-//            timestampTextView.setText("Последнее обновление : " + timestampString);
-
+//            jsonDateString = "на : " + jsonDate.format(formatter);
+//            timestampString = "Последнее обновление : " + timestamp.format(formatterHMS);
 
             String val = jsonObject.get(TAG_VALUTE).toString().substring(1, jsonObject.get(TAG_VALUTE).toString().length() - 1);
             res = val.split("\\},");
@@ -264,15 +284,10 @@ public class MainActivity extends AppCompatActivity  {
                 }
                 jsonArray.add(parseString(res[i]).getAsJsonObject());
             }
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
         Log.d("MyLog", jsonArray.size() + " elements of JsonArray created");
-
-
-
         return jsonArray;
 
     }
@@ -291,7 +306,6 @@ public class MainActivity extends AppCompatActivity  {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
         }
         Log.d("MyLog", " list of " + valuteList.size() + " valutes created by createValuteList...");
     }
