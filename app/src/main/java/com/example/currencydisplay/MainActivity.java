@@ -43,12 +43,14 @@ public class MainActivity extends AppCompatActivity  {
     protected static List<Valute> valuteList = new ArrayList<>();
     private RecyclerView.LayoutManager layoutManager;
 
+    private boolean updateInProgress;
 
 
     private TextView infoTextView;
     private TextView dateTextView;
     private TextView timestampTextView;
     private ProgressBar progressBar;
+    private long startTime;
 
     RecyclerView valuteRecycler;
     ValuteAdapter valuteAdapter;
@@ -60,7 +62,6 @@ public class MainActivity extends AppCompatActivity  {
         Thread secThread = new Thread(updater);
         secThread.start();
         //Same:   new Thread(updater).start();
-
     }
 
     private Runnable updater = new Runnable(){
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity  {
         GetURLData getURLData = new GetURLData();
         getURLData.execute(currencies);
 
+        startTime = System.currentTimeMillis();
         mHandler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
             @Override
             public boolean handleMessage(@NonNull Message message) {
@@ -107,11 +109,24 @@ public class MainActivity extends AppCompatActivity  {
                     case MSG_UPDATE_IN_PROGRESS:
                         updateButton.setEnabled(false);
                         updateButton.setAlpha(0.1f);
-                        updateButton.setVisibility(View.VISIBLE);
+                        valuteRecycler.setAlpha(0.5f);
+                        //updateButton.setVisibility(View.VISIBLE);
+                        infoTextView.setVisibility(View.VISIBLE);
+                        infoTextView.setText("Загрузка списка: ...");
+                        progressBar.setVisibility(View.VISIBLE); // показываем индикатор прогресса
+                        try {
+                            takePause(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         break;
                     case MSG_UPDATE_COMPLETED:
                         updateButton.setEnabled(true);
                         updateButton.setAlpha(1f);
+                        valuteRecycler.setAlpha(1f);
+                        infoTextView.setText("Загрузка списка: завершено");
+                        infoTextView.setVisibility(View.INVISIBLE);
+                        progressBar.setVisibility(View.INVISIBLE); // прячем бесконечный индикатор
                         valuteAdapter.notifyDataSetChanged();
                         break;
                 }
@@ -185,34 +200,25 @@ public class MainActivity extends AppCompatActivity  {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            infoTextView.setVisibility(View.VISIBLE);
-            infoTextView.setText("Загрузка списка: ...");
-            progressBar.setVisibility(View.VISIBLE); // показываем индикатор прогресса
-        }
+     }
 
         @Override
         protected Void doInBackground(String... strings) {
-
+            mHandler.sendEmptyMessage(MSG_UPDATE_IN_PROGRESS);
             parseJsonToValutesList(readJsonDataFromWeb(strings[0]));
-
-            //publishProgress(progress);
             return null;
         }
 
         @Override
         protected void onProgressUpdate(Integer... progress) {
             super.onProgressUpdate(progress);
-            infoTextView.setText("Загрузка списка: " + progress[0]);
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-
-            infoTextView.setText("Загрузка списка: завершено");
-            infoTextView.setVisibility(View.INVISIBLE);
-            progressBar.setVisibility(View.INVISIBLE); // прячем бесконечный индикатор
             valuteAdapter.notifyDataSetChanged();
+            mHandler.sendEmptyMessage(MSG_UPDATE_COMPLETED);
         }
     }
 
@@ -232,17 +238,21 @@ public class MainActivity extends AppCompatActivity  {
             JsonElement root = parseReader(new BufferedReader(new InputStreamReader(in)));
             jsonObject = root.getAsJsonObject();
 
-            String jsonDateString = jsonObject.get("Date").toString();
-            String timestampString = jsonObject.get("Timestamp").toString();
+//            String jsonDateString = jsonObject.get("Date").toString();
+//            String timestampString = jsonObject.get("Timestamp").toString();
+//
+//            LocalDateTime jsonDate = LocalDateTime.parse(jsonDateString.substring(1,jsonDateString.length()-1), ISO_OFFSET_DATE_TIME);
+//            LocalDateTime timestamp = LocalDateTime.parse(timestampString.substring(1,timestampString.length()-1), ISO_OFFSET_DATE_TIME);
+//
+//            DateTimeFormatter formatterHMS = DateTimeFormatter.ofPattern("H:mm  dd-MM-yyyy ");
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+//
+//            dateTextView.setText("на : " + jsonDate.format(formatter));
+//            timestampTextView.setText("Последнее обновление : " + timestamp.format(formatterHMS));
+//
+//            dateTextView.setText("на : " + jsonDateString);
+//            timestampTextView.setText("Последнее обновление : " + timestampString);
 
-            LocalDateTime jsonDate = LocalDateTime.parse(jsonDateString.substring(1,jsonDateString.length()-1), ISO_OFFSET_DATE_TIME);
-            LocalDateTime timestamp = LocalDateTime.parse(timestampString.substring(1,timestampString.length()-1), ISO_OFFSET_DATE_TIME);
-
-            DateTimeFormatter formatterHMS = DateTimeFormatter.ofPattern("H:mm  dd-MM-yyyy ");
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
-            dateTextView.setText("на : " + jsonDate.format(formatter));
-            timestampTextView.setText("Последнее обновление : " + timestamp.format(formatterHMS));
 
             String val = jsonObject.get(TAG_VALUTE).toString().substring(1, jsonObject.get(TAG_VALUTE).toString().length() - 1);
             res = val.split("\\},");
