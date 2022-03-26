@@ -53,7 +53,7 @@ public class ConverterActivity extends Activity {
         valuteName.setText(name);
 
         backButton.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("NotifyDataSetChanged")
+            //@SuppressLint("NotifyDataSetChanged")
             @Override
             public void onClick(View view) {
                 finish();
