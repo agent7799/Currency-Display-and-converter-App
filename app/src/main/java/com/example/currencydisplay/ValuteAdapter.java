@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.text.DecimalFormat;
 import java.util.List;
 
 
@@ -18,7 +20,7 @@ public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteView
 
     Context context;
     static List<Valute> valutes;
-
+    private static final DecimalFormat df = new DecimalFormat("###,##0.00");
 
     public ValuteAdapter(Context context, List<Valute> valutes) {
         this.context = context;
@@ -36,12 +38,14 @@ public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteView
 
     @Override
     public void onBindViewHolder(@NonNull ValuteViewHolder holder, int position) {
-        String text = (position + 1)
-                + "\t " + valutes.get(position).getNominal() + " "
+        String text = "\t " + valutes.get(position).getNominal() + " "
                 + valutes.get(position).getName() + "\n"
                 + "\t\t\t\t" + valutes.get(position).getValue() + " руб.";
 
-        holder.valuteTitle.setText(text);
+        //holder.valuteTitle.setText(text);
+        holder.valuteTitle.setText("\t " + valutes.get(position).getNominal() + " "
+                + valutes.get(position).getName() + "\n");
+        holder.valuteRate.setText("\n " + df.format(valutes.get(position).getValue()) + " рублей");
 
     }
 
@@ -55,10 +59,12 @@ public class ValuteAdapter extends RecyclerView.Adapter<ValuteAdapter.ValuteView
 
     class ValuteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView valuteTitle;
+        TextView valuteRate;
 
         public ValuteViewHolder(@NonNull View itemView) {
             super(itemView);
             valuteTitle = itemView.findViewById(R.id.valuteTitle);
+            valuteRate = itemView.findViewById(R.id.valuteRate);
 
             itemView.setOnClickListener(this);
 

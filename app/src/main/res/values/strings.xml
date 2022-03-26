@@ -22,7 +22,7 @@
     <string name="result">Результат</string>
     <string name="sum_roubles">Введите сумму в рублях</string>
     <string name="in_roubles">в рублях</string>
-
+    <string name="currency_rate">Currency rate</string>
 
 
 </resources>

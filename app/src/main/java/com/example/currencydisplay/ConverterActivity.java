@@ -67,7 +67,7 @@ public class ConverterActivity extends Activity {
                     Toast.makeText(ConverterActivity.this, R.string.sum_roubles, Toast.LENGTH_LONG).show();
                     } else {
                     sum = Double.parseDouble(String.valueOf(sum_field.getText())) / rate / nominal;
-                    result.setText(String.valueOf(df.format(sum)));
+                    result.setText(df.format(sum));
                 }
             }
         });

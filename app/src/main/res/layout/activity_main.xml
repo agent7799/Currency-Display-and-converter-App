@@ -4,12 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/mainBGcolor"
+
 
     tools:context=".MainActivity">
 
     <TextView
         android:id="@+id/dateTextView"
+        android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -50,6 +51,7 @@
 
     <TextView
         android:id="@+id/textView2"
+        android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -70,19 +72,23 @@
 
         android:id="@+id/valuteRecycler"
         android:layout_width="match_parent"
-        android:layout_height="355dp"
+        android:layout_height="450dp"
         android:layout_margin="8dp"
+        android:layout_weight="0"
         android:background="@color/cardview_light_background"
         app:flow_horizontalAlign="center"
-
+        app:layout_constraintBottom_toTopOf="@+id/updateButton"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.68"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/timestampTextView">
+        app:layout_constraintTop_toBottomOf="@+id/timestampTextView"
+        app:layout_constraintVertical_bias="0.0">
 
     </androidx.recyclerview.widget.RecyclerView>
 
     <TextView
         android:id="@+id/infoTextView"
+
         android:layout_width="274dp"
         android:layout_height="48dp"
         android:text="@string/info_text"
@@ -105,19 +111,22 @@
 
     <Button
         android:id="@+id/updateButton"
+        android:layout_weight="1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:layout_marginBottom="4dp"
         android:text="@string/update"
         android:textAlignment="center"
         app:flow_horizontalAlign="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/valuteRecycler" />
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/timestampTextView"
+        android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
