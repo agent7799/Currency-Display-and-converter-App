@@ -1,3 +1,9 @@
+#educational project
+
+# VoiceAssistantApp
+
+Android Application using voice recognition API - Voice Assistant 
+
 # Currency-Display-and-converter-App
 
 Android application to display list of currencies and rates fron Central Bank site
